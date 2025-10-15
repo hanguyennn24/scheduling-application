@@ -16,8 +16,8 @@ load_dotenv()
 app = Flask(__name__)
 
 # Compute a deterministic DB path pointing to the project's instance/scheduler.db
-# app.py lives in venv/shift_scheduler_app; go up to the workspace root then into instance/
-BASE_DIR = Path(__file__).resolve().parents[2]
+# app.py lives in shift_scheduler_app; go up to the workspace root then into instance/
+BASE_DIR = Path(__file__).resolve().parents[1]
 DB_PATH = BASE_DIR / 'instance' / 'scheduler.db'
 DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
