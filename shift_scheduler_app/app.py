@@ -552,3 +552,5 @@ def solve_schedule():
 
 if __name__ == '__main__':
     app.run(debug=True) # debug=True allows automatic reloading on code changes
+
+app.run(host='0.0.0.0', port=5000, debug=True) # host='0.0.0.0' allows external access
