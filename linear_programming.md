@@ -12,51 +12,44 @@ The application is designed for the **horeca sector in Belgium**, supporting bot
 
 ## Sets and Indices
 
-| Set | Description | Example |
-|-----|-------------|---------|
-| $E$ | Set of employees | $\{e_1, e_2, e_3, ..., e_n\}$ |
-| $D$ | Set of working days | $\{\text{Mon, Tue, Wed, Thu, Fri, Sat, Sun}\}$ |
-| $S$ | Set of shift types | $\{\text{Morning, Afternoon, Evening}\}$ |
+- **E**: Set of employees (e.g., {e1, e2, e3, ..., en})
+- **D**: Set of working days (e.g., {Mon, Tue, Wed, Thu, Fri, Sat, Sun})
+- **S**: Set of shift types (e.g., {Morning, Afternoon, Evening})
 
 ## Parameters
 
 ### Employee-Specific Parameters
-| Parameter | Description | Type |
-|-----------|-------------|------|
-| $\text{avail}_{e,d,s}$ | Availability of employee $e$ for shift $s$ on day $d$ | Binary (0/1) |
-| $\text{min\_hours}_e$ | Minimum weekly working hours for employee $e$ | Integer |
-| $\text{max\_hours}_e$ | Maximum weekly working hours for employee $e$ | Integer |
-| $\text{wage}_e$ | Hourly wage rate for employee $e$ | Real |
-| $\text{responsible}_e$ | Whether employee $e$ can be a responsible person | Binary (0/1) |
+- **avail(e,d,s)**: Availability of employee e for shift s on day d (Binary: 0/1)
+- **min_hours(e)**: Minimum weekly working hours for employee e (Integer)
+- **max_hours(e)**: Maximum weekly working hours for employee e (Integer)
+- **wage(e)**: Hourly wage rate for employee e (Real number)
+- **responsible(e)**: Whether employee e can be a responsible person (Binary: 0/1)
 
 ### Shift-Specific Parameters
-| Parameter | Description | Type |
-|-----------|-------------|------|
-| $\text{hours}_s$ | Duration of shift $s$ in hours | Real |
-| $\text{min\_emp}_{d,s}$ | Minimum number of employees required for shift $s$ on day $d$ | Integer |
-| $\text{max\_emp}_{d,s}$ | Maximum number of employees allowed for shift $s$ on day $d$ | Integer |
+- **hours(s)**: Duration of shift s in hours (Real number)
+- **min_emp(d,s)**: Minimum number of employees required for shift s on day d (Integer)
+- **max_emp(d,s)**: Maximum number of employees allowed for shift s on day d (Integer)
 
 ### System Parameters
-| Parameter | Description | Type |
-|-----------|-------------|------|
-| $\text{resp\_required}$ | Whether at least one responsible person is required per shift | Binary (0/1) |
-| $\text{fulltime\_hours}$ | Standard weekly hours for full-time employees | Integer |
+- **resp_required**: Whether at least one responsible person is required per shift (Binary: 0/1)
+- **fulltime_hours**: Standard weekly hours for full-time employees (Integer)
 
 ## Decision Variables
 
 The model uses a single type of decision variable:
 
-$$x_{e,d,s} \in \{0, 1\} \quad \forall e \in E, d \in D, s \in S$$
+**x(e,d,s)** ∈ {0, 1} for all employees e, days d, and shifts s
 
 Where:
-- $x_{e,d,s} = 1$ if employee $e$ is assigned to shift $s$ on day $d$
-- $x_{e,d,s} = 0$ otherwise
+- **x(e,d,s) = 1** if employee e is assigned to shift s on day d
+- **x(e,d,s) = 0** otherwise
 
 ## Objective Function
 
 **Minimize total labor cost:**
 
-$$\text{Minimize} \quad Z = \sum_{e \in E} \sum_{d \in D} \sum_{s \in S} \text{wage}_e \times \text{hours}_s \times x_{e,d,s}$$
+**Minimize Z = Σ Σ Σ wage(e) × hours(s) × x(e,d,s)**
+(Sum over all employees e, days d, and shifts s)
 
 The objective function calculates the total variable labor cost by summing the product of:
 - Employee hourly wage rate
@@ -70,32 +63,37 @@ The objective function calculates the total variable labor cost by summing the p
 ### 1. Employee Availability Constraint
 Employees can only be assigned to shifts when they are available:
 
-$$x_{e,d,s} = 0 \quad \forall e \in E, d \in D, s \in S \text{ where } \text{avail}_{e,d,s} = 0$$
+**x(e,d,s) = 0** for all employees e, days d, shifts s where **avail(e,d,s) = 0**
 
 ### 2. Minimum Weekly Hours Constraint
 Each employee must work at least their minimum required hours per week:
 
-$$\sum_{d \in D} \sum_{s \in S} \text{hours}_s \times x_{e,d,s} \geq \text{min\_hours}_e \quad \forall e \in E \text{ where } \text{min\_hours}_e > 0$$
+**Σ Σ hours(s) × x(e,d,s) ≥ min_hours(e)** for all employees e where min_hours(e) > 0
+(Sum over all days d and shifts s)
 
 ### 3. Maximum Weekly Hours Constraint
 Each employee cannot exceed their maximum allowed hours per week:
 
-$$\sum_{d \in D} \sum_{s \in S} \text{hours}_s \times x_{e,d,s} \leq \text{max\_hours}_e \quad \forall e \in E \text{ where } \text{max\_hours}_e > 0$$
+**Σ Σ hours(s) × x(e,d,s) ≤ max_hours(e)** for all employees e where max_hours(e) > 0
+(Sum over all days d and shifts s)
 
 ### 4. Minimum Staffing Constraint
 Each shift must have at least the minimum required number of employees:
 
-$$\sum_{e \in E} x_{e,d,s} \geq \text{min\_emp}_{d,s} \quad \forall d \in D, s \in S \text{ where } \text{min\_emp}_{d,s} > 0$$
+**Σ x(e,d,s) ≥ min_emp(d,s)** for all days d, shifts s where min_emp(d,s) > 0
+(Sum over all employees e)
 
 ### 5. Maximum Staffing Constraint
 Each shift cannot have more than the maximum allowed number of employees:
 
-$$\sum_{e \in E} x_{e,d,s} \leq \text{max\_emp}_{d,s} \quad \forall d \in D, s \in S \text{ where } \text{max\_emp}_{d,s} > 0$$
+**Σ x(e,d,s) ≤ max_emp(d,s)** for all days d, shifts s where max_emp(d,s) > 0
+(Sum over all employees e)
 
 ### 6. Responsible Person Constraint
 If required, at least one responsible person must be assigned to each shift:
 
-$$\sum_{e \in E} \text{responsible}_e \times x_{e,d,s} \geq 1 \quad \forall d \in D, s \in S \text{ if } \text{resp\_required} = 1$$
+**Σ responsible(e) × x(e,d,s) ≥ 1** for all days d, shifts s if resp_required = 1
+(Sum over all employees e)
 
 ## Model Implementation Details
 
