@@ -2,7 +2,7 @@
 
 ## Model Overview
 
-This scheduling application uses a **Binary Integer Linear Programming (BILP)** model implemented with **Gurobi Optimizer** to generate optimal employee work schedules. The model minimizes total labor costs while satisfying various operational constraints including employee availability, working hours limits, staffing requirements, and responsible person coverage.
+This scheduling application uses a **Binary Integer Linear Programming (BILP)** model implemented with **PuLP** to generate optimal employee work schedules. The model minimizes total labor costs while satisfying various operational constraints including employee availability, working hours limits, staffing requirements, and responsible person coverage.
 
 The optimization problem is formulated as a cost minimization problem where the objective is to assign employees to shifts across multiple days while respecting all business rules and constraints.
 
@@ -98,9 +98,9 @@ If required, at least one responsible person must be assigned to each shift:
 ## Model Implementation Details
 
 ### Technology Stack
-- **Optimization Solver**: Gurobi Optimizer 11.0.0
+- **Optimization Solver**: PuLP (using CBC solver by default)
 - **Programming Language**: Python 3.9+
-- **Modeling Interface**: gurobipy (Gurobi Python API)
+- **Modeling Interface**: PuLP Python Library
 - **Web Framework**: Flask 3.0.0
 
 
